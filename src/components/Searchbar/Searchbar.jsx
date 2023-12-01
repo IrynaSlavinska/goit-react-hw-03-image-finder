@@ -20,7 +20,7 @@ class Searchbar extends Component {
   };
 
   handleQueryChange = event => {
-    this.setState({ query: event.currentTarget.value.toLowerCase() });
+    this.setState({ query: event.target.value.toLowerCase() });
   };
 
   handleFormSubmit = event => {

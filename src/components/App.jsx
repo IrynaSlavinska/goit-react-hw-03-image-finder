@@ -17,31 +17,25 @@ class App extends Component {
     totalImages: 0,
   };
 
-  // if (prevState.query !== query) {
-  //   this.setState({
-  //     page: 1,
-  //     images: [],
-  //     totalImages: 0,
-  //   });
-  // }
-
   componentDidUpdate(prevProps, prevState) {
     const { query, page } = this.state;
 
     if (prevState.query !== query || prevState.page !== page) {
+      this.setState(previous => ({
+        isLoading: !previous.isLoading,
+      }));
       pixabayAPI(query, page)
         .then(response => {
           if (response.ok) {
-            this.setState({ isLoading: true });
             return response.json();
           }
           return Promise.reject(new Error(`Try again`));
         })
         .then(data => {
-          this.setState({
-            images: [...prevState.images, ...data.hits],
+          this.setState(previous => ({
+            images: [...previous.images, ...data.hits],
             totalImages: data.totalHits,
-          });
+          }));
         })
         .catch(error => {
           return Notiflix.Notify.failure(
@@ -54,16 +48,19 @@ class App extends Component {
     }
   }
 
-  handleFormSubmit = query => {
-    this.setState({
-      query,
-    });
-  };
-
   handleMoreClick = () => {
     this.setState(prevState => ({
       page: prevState.page + 1,
     }));
+  };
+
+  handleFormSubmit = query => {
+    this.setState({
+      query,
+      page: 1,
+      images: [],
+      totalImages: 0,
+    });
   };
 
   render() {
@@ -73,10 +70,9 @@ class App extends Component {
       <div className="container">
         <Searchbar onSubmit={this.handleFormSubmit} />
 
-        {isLoading && <CirclesLoader />}
-
         {images.length > 0 && <ImageGallery images={images} />}
 
+        {isLoading && <CirclesLoader />}
         {totalImages > images.length && totalImages && (
           <Button onClick={this.handleMoreClick} />
         )}
