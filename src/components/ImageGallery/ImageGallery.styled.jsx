@@ -6,5 +6,5 @@ export const ImageList = styled.ul`
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   grid-gap: 16px;
   padding: 0;
-  margin: 0 auto;
+  margin: 20px auto;
 `;

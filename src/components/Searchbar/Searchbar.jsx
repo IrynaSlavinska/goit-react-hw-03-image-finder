@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import Notiflix from 'notiflix';
+
 import { CiSearch } from 'react-icons/ci';
 import {
   SearchBar,
@@ -6,6 +8,11 @@ import {
   SearchFormButton,
   SearchFormInput,
 } from './Searchbar.styled';
+
+Notiflix.Notify.init({
+  position: 'right-top',
+  timeout: 5000,
+});
 
 class Searchbar extends Component {
   state = {
@@ -18,32 +25,35 @@ class Searchbar extends Component {
 
   handleFormSubmit = event => {
     event.preventDefault();
-    if (this.state.query === '') {
-      alert('Enter SMTH');
-      return;
+
+    const { query } = this.state;
+
+    if (query.trim() === '') {
+      return Notiflix.Notify.failure('Enter something and try again.');
     }
 
-    this.props.onSubmit(this.state.query);
+    this.props.onSubmit(query);
     this.setState({ query: '' });
   };
 
   render() {
     const { query } = this.state;
+
     return (
-      <SearchBar onSubmit={this.handleFormSubmit}>
-        <SearchForm>
+      <SearchBar>
+        <SearchForm onSubmit={this.handleFormSubmit}>
           <SearchFormButton type="submit">
             <CiSearch /> Search
           </SearchFormButton>
 
           <SearchFormInput
-            className="input"
             type="text"
+            name="query"
+            value={query}
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
             onChange={this.handleQueryChange}
-            value={query}
           />
         </SearchForm>
       </SearchBar>
